@@ -18,6 +18,7 @@ package me.xingrz.gankmeizhi.widget;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -286,16 +287,19 @@ public abstract class ArrayRecyclerAdapter<E, VH extends RecyclerView.ViewHolder
         }
 
         // 然后遍历新列表，对旧列表的数据更新、移动、增加
-        for (int indexNew = 0; indexNew < data.size(); indexNew++) {
+        for (int indexNew = 0; indexNew < data.size() - 1; indexNew++) {
             E item = data.get(indexNew);
 
             int indexOld = indexOf(item);
 
+            Log.v(ArrayRecyclerAdapter.class.getSimpleName(), "index: " + indexNew + "\tindexOld: " + indexOld + " : " + data.size());
+
             if (indexOld == -1) {
-                add(indexNew, item);
+                //add(indexNew, item);
+                list.add(item);
             } else if (indexOld == indexNew) {
-                set(indexNew, item);
-            } else {
+                //set(indexNew, item);
+            } else if (indexOld >= indexNew) {
                 list.remove(indexOld);
                 list.add(indexNew, item);
                 notifyItemMoved(indexOld, indexNew);

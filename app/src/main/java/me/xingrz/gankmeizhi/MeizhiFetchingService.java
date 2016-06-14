@@ -124,12 +124,11 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
                 fetchLatest(realm, 1);
             } else if (ACTION_FETCH_FORWARD.equals(intent.getAction())) {
                 Log.d(TAG, "latest fetch: " + latest.first().getUrl());
-                fetchLatest(realm, ++page);
-
+                fetchLatest(realm, page > 1 ? page : 1);
                         //fetchSince(realm, latest.first().getPublishedAt());
             } else if (ACTION_FETCH_BACKWARD.equals(intent.getAction())) {
                 Log.d(TAG, "earliest fetch: " + latest.last().getUrl());
-                fetchLatest(realm, page > 1 ? page : 1);
+                fetchLatest(realm, ++page);
                 //fetchBefore(realm, latest.last().getPublishedAt());
             }
         } catch (IOException e) {
