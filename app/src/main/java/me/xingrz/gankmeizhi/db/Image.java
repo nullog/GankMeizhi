@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 import me.xingrz.gankmeizhi.net.ImageFetcher;
 
@@ -34,7 +35,7 @@ public class Image extends RealmObject {
 
     @PrimaryKey
     @SerializedName("objectId")
-    private String id;
+    private long id;
 
     private String url;
 
@@ -45,14 +46,20 @@ public class Image extends RealmObject {
 
     public static RealmResults<Image> all(Realm realm) {
         return realm.where(Image.class)
-                .findAllSorted("publishedAt", RealmResults.SORT_ORDER_DESCENDING);
+                .findAllSorted("publishedAt", Sort.DESCENDING);
     }
 
     public static Image persist(Image image, ImageFetcher imageFetcher)
             throws IOException, InterruptedException, ExecutionException {
         Point size = new Point();
 
+        Realm realm = Realm.getDefaultInstance();
+
         imageFetcher.prefetchImage(image.getUrl(), size);
+
+        long nextID = realm.isEmpty() ? 0l : (int)(realm.where(Image.class).max("id").longValue() + 1);
+
+        image.setId(nextID);
 
         image.setWidth(size.x);
         image.setHeight(size.y);
@@ -60,11 +67,11 @@ public class Image extends RealmObject {
         return image;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -99,5 +106,7 @@ public class Image extends RealmObject {
     public void setPublishedAt(Date publishedAt) {
         this.publishedAt = publishedAt;
     }
+
+
 
 }

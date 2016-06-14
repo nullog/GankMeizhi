@@ -29,7 +29,6 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,12 +39,14 @@ import java.util.concurrent.ExecutionException;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.exceptions.RealmIOException;
 import me.xingrz.gankmeizhi.db.Image;
 import me.xingrz.gankmeizhi.net.DateUtils;
 import me.xingrz.gankmeizhi.net.GankApi;
 import me.xingrz.gankmeizhi.net.ImageFetcher;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.OkHttpClient;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Retrofit;
 
 /**
  * 数据抓取服务
@@ -70,6 +71,10 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
 
     private static final int COUNT_PER_FETCH = 10;
 
+    private static int page = 1;
+
+    private int fetched = 0;
+
     private final OkHttpClient client = new OkHttpClient();
 
     private final Gson gson = new GsonBuilder()
@@ -88,7 +93,7 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
             .create();
 
     private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://gank.avosapps.com/api/")
+            .baseUrl("https://gank.io/api/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
@@ -113,18 +118,19 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
 
         RealmResults<Image> latest = Image.all(realm);
 
-        int fetched = 0;
-
         try {
             if (latest.isEmpty()) {
                 Log.d(TAG, "no latest, fresh fetch");
-                fetched = fetchLatest(realm);
+                fetchLatest(realm, 1);
             } else if (ACTION_FETCH_FORWARD.equals(intent.getAction())) {
                 Log.d(TAG, "latest fetch: " + latest.first().getUrl());
-                fetched = fetchSince(realm, latest.first().getPublishedAt());
+                fetchLatest(realm, ++page);
+
+                        //fetchSince(realm, latest.first().getPublishedAt());
             } else if (ACTION_FETCH_BACKWARD.equals(intent.getAction())) {
                 Log.d(TAG, "earliest fetch: " + latest.last().getUrl());
-                fetched = fetchBefore(realm, latest.last().getPublishedAt());
+                fetchLatest(realm, page > 1 ? page : 1);
+                //fetchBefore(realm, latest.last().getPublishedAt());
             }
         } catch (IOException e) {
             Log.e(TAG, "failed to issue network request", e);
@@ -141,20 +147,45 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
         localBroadcastManager.sendBroadcast(broadcast);
     }
 
-    private int fetchLatest(Realm realm) throws IOException {
-        GankApi.Result<List<Image>> result = gankApi.latest(COUNT_PER_FETCH).execute().body();
+    private int fetchLatest(Realm realm, int page) throws IOException {
 
-        if (result.error) {
+        GankApi.Result<List<Image>> result = gankApi.latest(COUNT_PER_FETCH, page)
+                .execute().body();
+        /*Call<GankApi.Result<List<Image>>> call = gankApi.latest(COUNT_PER_FETCH, page);
+
+                call.enqueue(new Callback<GankApi.Result<List<Image>>>() {
+                    @Override
+                    public void onResponse(Call<GankApi.Result<List<Image>>> call, Response<GankApi.Result<List<Image>>> response) {
+
+                        fetched = response.body().results.size();
+                        for (int i = 0; i < response.body().results.size(); i++) {
+                            if (!saveToDb(realm, response.body().results.get(i))) {
+                                 throw new RealmIOException("Cannot save result to realm");
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<GankApi.Result<List<Image>>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });*/
+                //call.execute();
+
+        if(result.error){
             return 0;
         }
 
         for (int i = 0; i < result.results.size(); i++) {
             if (!saveToDb(realm, result.results.get(i))) {
+                Log.w(MeizhiFetchingService.class.getSimpleName(), new RealmIOException("Cannot save result to realm"));
                 return i;
             }
-        }
 
+        }
         return result.results.size();
+
     }
 
     private int fetchSince(Realm realm, Date sinceDate) throws IOException {
@@ -233,7 +264,7 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
         realm.beginTransaction();
 
         try {
-            realm.copyToRealm(Image.persist(image, this));
+            realm.copyToRealmOrUpdate(Image.persist(image, this));
         } catch (IOException | InterruptedException | ExecutionException e) {
             Log.e(TAG, "Failed to fetch image", e);
             realm.cancelTransaction();

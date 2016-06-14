@@ -39,7 +39,7 @@
             android:value="${UMENG_CHANNEL_VALUE}" />
 
         <meta-data
-            android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule"
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
             android:value="GlideModule" />
 
         <activity

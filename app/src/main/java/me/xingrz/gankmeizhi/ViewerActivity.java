@@ -125,7 +125,7 @@ public class ViewerActivity extends AppCompatActivity implements RealmChangeList
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
         images = Image.all(realm);
         adapter.notifyDataSetChanged();
     }

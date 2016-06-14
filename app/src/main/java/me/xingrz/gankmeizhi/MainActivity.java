@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MobclickAgent.updateOnlineConfig(this);
-
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
         populate();
     }
 
