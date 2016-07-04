@@ -287,7 +287,7 @@ public abstract class ArrayRecyclerAdapter<E, VH extends RecyclerView.ViewHolder
         }
 
         // 然后遍历新列表，对旧列表的数据更新、移动、增加
-        for (int indexNew = 0; indexNew < data.size() - 1; indexNew++) {
+        for (int indexNew = 0; indexNew < data.size(); indexNew++) {
             E item = data.get(indexNew);
 
             int indexOld = indexOf(item);

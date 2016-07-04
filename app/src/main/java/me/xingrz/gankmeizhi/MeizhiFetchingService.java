@@ -45,8 +45,8 @@ import me.xingrz.gankmeizhi.net.DateUtils;
 import me.xingrz.gankmeizhi.net.GankApi;
 import me.xingrz.gankmeizhi.net.ImageFetcher;
 import okhttp3.OkHttpClient;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * 数据抓取服务
@@ -177,6 +177,9 @@ public class MeizhiFetchingService extends IntentService implements ImageFetcher
         }
 
         for (int i = 0; i < result.results.size(); i++) {
+            if(realm.where(Image.class).contains("id", result.results.get(i).getId()) != null){
+
+            }
             if (!saveToDb(realm, result.results.get(i))) {
                 Log.w(MeizhiFetchingService.class.getSimpleName(), new RealmIOException("Cannot save result to realm"));
                 return i;

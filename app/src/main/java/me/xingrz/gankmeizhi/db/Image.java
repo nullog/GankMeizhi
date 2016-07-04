@@ -35,14 +35,25 @@ public class Image extends RealmObject {
 
     @PrimaryKey
     @SerializedName("objectId")
-    private long id;
+    private long _id;
+
+    //@PrimaryKey Only one Primary Key
+    private String id;
 
     private String url;
 
     private int width;
     private int height;
 
+    private Date createAt;
+
     private Date publishedAt;
+
+    private String desc;
+
+    private String source;
+
+    // private String type:"福利", used: true, who: "donot care"
 
     public static RealmResults<Image> all(Realm realm) {
         return realm.where(Image.class)
@@ -57,9 +68,9 @@ public class Image extends RealmObject {
 
         imageFetcher.prefetchImage(image.getUrl(), size);
 
-        long nextID = realm.isEmpty() ? 0l : (int)(realm.where(Image.class).max("id").longValue() + 1);
+        long nextID = realm.isEmpty() ? 0l : (int) (realm.where(Image.class).max("_id").longValue() + 1);
 
-        image.setId(nextID);
+        image.set_id(nextID);
 
         image.setWidth(size.x);
         image.setHeight(size.y);
@@ -67,11 +78,19 @@ public class Image extends RealmObject {
         return image;
     }
 
-    public long getId() {
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -107,6 +126,27 @@ public class Image extends RealmObject {
         this.publishedAt = publishedAt;
     }
 
+    public Date getCreateAt() {
+        return createAt;
+    }
 
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
 
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }
