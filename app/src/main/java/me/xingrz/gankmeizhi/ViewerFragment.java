@@ -31,7 +31,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ortiz.touch.TouchImageView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -39,7 +39,7 @@ public class ViewerFragment extends Fragment implements RequestListener<String, 
 
     private static final String TAG = "ViewerFragment";
 
-    @Bind(R.id.picture)
+    @BindView(R.id.picture)
     TouchImageView image;
 
     private ViewerActivity activity;

@@ -46,7 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.BindColor;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -59,16 +59,16 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
-    @Bind(R.id.appbar)
+    @BindView(R.id.appbar)
     AppBarLayout appbar;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @Bind(R.id.refresher)
+    @BindView(R.id.refresher)
     SwipeRefreshLayout refresher;
 
-    @Bind(R.id.content)
+    @BindView(R.id.content)
     RecyclerView content;
 
     @BindColor(R.color.primary)

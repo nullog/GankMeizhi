@@ -30,18 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AboutActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @Bind(R.id.version)
+    @BindView(R.id.version)
     TextView version;
 
-    @Bind(R.id.libraries)
+    @BindView(R.id.libraries)
     RecyclerView libraries;
 
     @Override
@@ -160,7 +160,7 @@ public class AboutActivity extends AppCompatActivity {
 
         class ItemViewHolder extends ViewHolder {
 
-            @Bind(R.id.name)
+            @BindView(R.id.name)
             TextView name;
 
             public ItemViewHolder(View itemView) {

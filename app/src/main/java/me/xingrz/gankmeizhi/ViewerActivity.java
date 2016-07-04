@@ -31,7 +31,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnPageChange;
 import io.realm.Realm;
@@ -51,10 +51,10 @@ public class ViewerActivity extends AppCompatActivity implements RealmChangeList
             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-    @Bind(R.id.puller)
+    @BindView(R.id.puller)
     PullBackLayout puller;
 
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager pager;
 
     private int index;

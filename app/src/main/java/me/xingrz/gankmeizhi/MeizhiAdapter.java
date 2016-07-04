@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.xingrz.gankmeizhi.widget.ArrayRecyclerAdapter;
 import me.xingrz.gankmeizhi.widget.RatioImageView;
@@ -71,7 +71,7 @@ public abstract class MeizhiAdapter extends ArrayRecyclerAdapter<ImageWrapper, M
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.picture)
+        @BindView(R.id.picture)
         public RatioImageView imageView;
 
         public ViewHolder(@LayoutRes int resource, ViewGroup parent) {
