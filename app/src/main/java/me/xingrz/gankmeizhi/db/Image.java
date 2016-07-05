@@ -68,7 +68,7 @@ public class Image extends RealmObject {
 
         imageFetcher.prefetchImage(image.getUrl(), size);
 
-        long nextID = realm.isEmpty() ? 0l : (int) (realm.where(Image.class).max("_id").longValue() + 1);
+        long nextID = realm.isEmpty() ? 1l : (int) (realm.where(Image.class).max("_id").longValue() + 1);
 
         image.set_id(nextID);
 

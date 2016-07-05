@@ -27,6 +27,12 @@ import retrofit2.http.Path;
 
 public interface GankApi {
 
+    // 获取发过干货日期接口:
+    // http://gank.io/api/day/history
+    @GET("day/history")
+    Call<Result<List<String>>> history();
+
+    // http://gank.io/api/data/福利/10/1
     @GET("data/%E7%A6%8F%E5%88%A9/{count}/{page}")
     Call<Result<List<Image>>> latest(@Path("count") int count,
                                      @Path("page") int page);

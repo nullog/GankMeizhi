@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -46,8 +45,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
 import butterknife.BindColor;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -74,6 +73,9 @@ public class MainActivity extends AppCompatActivity
     @BindColor(R.color.primary)
     int colorPrimary;
 
+    @BindColor(R.color.primary_light)
+    int colorLight;
+
     private Realm realm;
 
     private MeizhiAdapter adapter;
@@ -86,6 +88,8 @@ public class MainActivity extends AppCompatActivity
     private boolean isFetching = false;
 
     private Bundle reenterState;
+
+    AppBarLayout.OnOffsetChangedListener onOffsetChangedListener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +105,12 @@ public class MainActivity extends AppCompatActivity
         tintManager.setStatusBarTintColor(colorPrimary);
         tintManager.setStatusBarAlpha(1.0f);
 
-        appbar.addOnOffsetChangedListener((appBarLayout, i) ->
+        appbar.addOnOffsetChangedListener( onOffsetChangedListener = (appBarLayout, i) ->
                 tintManager.setStatusBarTintColor(ColorMixer.mix(
-                        colorPrimary, Color.BLACK, (float) -i / (float) appbar.getHeight()
+                        colorPrimary, colorLight, (float) -i / (float) appbar.getHeight()
                 )));
 
-        refresher.setColorSchemeResources(R.color.primary);
+        refresher.setColorSchemeResources(R.color.primary, R.color.primary_light);
         refresher.setOnRefreshListener(this);
 
         realm = Realm.getDefaultInstance();
@@ -157,6 +161,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(onOffsetChangedListener != null){
+            appbar.removeOnOffsetChangedListener(onOffsetChangedListener);
+        }
         realm.removeChangeListener(this);
         realm.close();
     }
